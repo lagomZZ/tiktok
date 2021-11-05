@@ -1,7 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 
-from interface import split_groups, get_groups_num, start_task, manage
-import queue,threading,time,math
+from interface import split_groups, get_groups_num, manage
+import queue,time,math
 
 '''参数'''
 comments=["aaaa","bbbbb"] #话术（list）
@@ -31,7 +31,6 @@ is_dynamic=False #动态抓取，默认否
 '''执行过程'''
 #线程池
 pool = ThreadPoolExecutor(max_workers=10)
-pool.submit()
 
 #循环次数
 for l in range(loop):

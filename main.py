@@ -1,4 +1,6 @@
-from interface import split_groups, get_groups_num, start_task
+from concurrent.futures import ThreadPoolExecutor
+
+from interface import split_groups, get_groups_num, start_task, manage
 import queue,threading,time,math
 
 '''参数'''
@@ -27,7 +29,9 @@ loop=groups_num/similtaneous_groups_num #循环数
 is_dynamic=False #动态抓取，默认否
 
 '''执行过程'''
-
+#线程池
+pool = ThreadPoolExecutor(max_workers=10)
+pool.submit()
 
 #循环次数
 for l in range(loop):
@@ -35,11 +39,16 @@ for l in range(loop):
     #分组执行,先取出同时运行的组
     similtaneous_groups=splited_groups[l:l+similtaneous_groups_num]
     count=0
-    for g in similtaneous_groups:
+    list=[]
+    for group in similtaneous_groups:
         #每个组一个线程，然后管理线程，进入同一个直播间
+        print('group ' + count + ' start' + time.time())
         count+=1
         studio_url = studio_url_queue.get()
-        thread = threading.Thread(target=manage(), args=(ads_id,comments,studio_url,studio_url_queue,is_dynamic))
-        thread.start()
-        print('thread '+count+' start'+time.time())
+        task = pool.submit(manage,group, comments, studio_url, studio_url_queue, is_dynamic,comment_num,comment_interval)
+        list.append(task)
+    for task in list:
+        task.result()
 
+
+pool.shutdown(wait=True)

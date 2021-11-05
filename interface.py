@@ -1,3 +1,4 @@
+import threading
 import requests,time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -6,7 +7,7 @@ import math
 
 # 直播间链接（队列，循环）
 studio_url = "https://www.tiktok.com/@simply1sue/live?lang=en"
-def start_task(ads_id,comments,studio_url,studio_url_queue,is_dynamic):
+def start_task(ads_id,comments,studio_url,studio_url_queue,is_dynamic,comment_num,comment_interval):
     # 操控浏览器
     open_url = "http://local.adspower.net:50325/api/v1/browser/start?user_id=" + ads_id
     close_url = "http://local.adspower.net:50325/api/v1/browser/stop?user_id=" + ads_id
@@ -46,7 +47,13 @@ def split_groups(total_num,each_group_num):
 def get_groups_num(total_num,each_group_num):
     return math.ceil(total_num/each_group_num)
 
-def manage():
-
+def manage(group, comments, studio_url, studio_url_queue, is_dynamic,comment_num,comment_interval):
+    list=[]
+    for ads_id in group:
+        thread = threading.Thread(target=manage(), args=(ads_id, comments, studio_url, studio_url_queue, is_dynamic,comment_num,comment_interval))
+        thread.start()
+        list.append(thread)
+    for thread in list:
+        thread.join()
     return 0
 start_task('i13ovhc','https://www.tiktok.com/@witchlightoracle/live?lang=en','bbbbbbbbb')

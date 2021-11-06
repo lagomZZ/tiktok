@@ -44,7 +44,8 @@ for l in range(loop):
         #每个组一个线程，然后管理线程，进入同一个直播间
         print('group ' + str(count) + ' start' + str(time.time()))
         count+=1
-        task = pool.submit(manage,group, comments, studio_url_queue, is_dynamic,comment_num,comment_interval)
+        task = pool.submit(manage,group, comments, studio_url_queue, is_dynamic,comment_num,comment_interval,each_group_studio_num)
+        print(task.result())
         list.append(task)
     for task in list:
         task.result()

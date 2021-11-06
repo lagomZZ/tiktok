@@ -13,6 +13,7 @@ def start_task(ads_id,comments,studio_url_queue,is_dynamic,comment_num,comment_i
     open_url = "http://local.adspower.net:50325/api/v1/browser/start?user_id=" + ads_id
     close_url = "http://local.adspower.net:50325/api/v1/browser/stop?user_id=" + ads_id
     resp = requests.get(open_url).json()
+    print(open_url)
     chrome_driver = resp["data"]["webdriver"]
     chrome_options = Options()
     chrome_options.add_experimental_option("debuggerAddress", resp["data"]["ws"]["selenium"])
@@ -57,10 +58,10 @@ def split_groups(ads_id,each_group_num):
     return splited_groups
 
 
-def manage(group, comments, studio_url_queue, is_dynamic,comment_num,comment_interval):
+def manage(group, comments, studio_url_queue, is_dynamic,comment_num,comment_interval,each_group_studio_num):
     list=[]
     for ads_id in group:
-        task = pool.submit(start_task(), ads_id, comments, studio_url_queue, is_dynamic,comment_num,comment_interval)
+        task = pool.submit(start_task, ads_id, comments, studio_url_queue, is_dynamic,comment_num,comment_interval,each_group_studio_num)
         list.append(task)
     for task in list:
         task.result()

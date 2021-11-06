@@ -1,3 +1,4 @@
+import threading
 from concurrent.futures import ThreadPoolExecutor
 
 from interface import split_groups, manage
@@ -6,7 +7,8 @@ import queue,time,math
 '''参数'''
 comments=["hi1","hi2","hi3","hi4","hi5","hi6","hi7","hi8","hi9","hi10"] #话术（list）,随机
 #5个账号
-ads_id = ["i13ovhc","i13un9b","i13kun7","i141fib","i141fic"] #浏览器id
+ads_id = ["i13un9b","i13kun7"] #浏览器id
+# ads_id = ["i13ovhc","i13un9b","i13kun7","i141fib","i141fic"] #浏览器id
 comment_interval=5 #评论间隔
 comment_num=5 #评论数量
 total_num=len(ads_id) #总账号数
@@ -15,10 +17,10 @@ similtaneous_groups_num=1 #同时运行分组数
 
 #直播间队列初始化
 studio_url_queue=queue.Queue()
-for item in ['https://www.tiktok.com/@mysticalempress233/live?lang=en',
-'https://www.tiktok.com/@kjbcandle/live?lang=en',
-'https://www.tiktok.com/@kingcrio/live?lang=en',
-'https://www.tiktok.com/@bigdaddy1123456/live?lang=en'
+for item in ['https://www.tiktok.com/@hoodrathippietarot/live?lang=en',
+'https://www.tiktok.com/@tamaranews/live?lang=en',
+'https://www.tiktok.com/@ughwhymefoo/live?lang=en',
+'https://www.tiktok.com/@serenity11117asmr/live?lang=en'
 ]:
     studio_url_queue.put(item)
 
@@ -42,13 +44,15 @@ for l in range(loop):
     list=[]
     for group in similtaneous_groups:
         #每个组一个线程，然后管理线程，进入同一个直播间
-        print('group ' + str(count) + ' start' + str(time.time()))
+        print('group ' + str(count) + ' start at ' + str(time.time()))
         count+=1
+        time.sleep(3)
         task = pool.submit(manage,group, comments, studio_url_queue, is_dynamic,comment_num,comment_interval,each_group_studio_num)
         print(task.result())
+        #print(threading.current_thread(),task.done())
         list.append(task)
     for task in list:
         task.result()
 
-
+print("所有分组运行结束")
 pool.shutdown(wait=True)
